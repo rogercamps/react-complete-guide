@@ -5,26 +5,31 @@ import Person from './Person/Person'
 class App extends Component {
   state = {
     persons: [
-      { name: 'Max', age: 28 },
-      { name: 'Roger', age: 38 },
-      { name: 'Xavier', age: 47 },
-      { name: 'Jordi', age: 43 },
-      { name: 'Bru', age: 2 }
+      { id: 'person1', name: 'Max', age: 28 },
+      { id: 'person2', name: 'Roger', age: 38 },
+      { id: 'person3', name: 'Xavier', age: 47 },
+      { id: 'person4', name: 'Jordi', age: 43 },
+      { id: 'person5', name: 'Bru', age: 2 }
     ],
     otherState: 'some other value',
     showPersons: false
   }
   
-  nameChangeHandler =  (event) => {
-    this.setState({
-      persons: [
-        { name: event.target.value, age: 28 },
-        { name: 'Roger', age: 38 },
-        { name: 'Xavier', age: 47 },
-        { name: 'Jordi', age: 43 },
-        { name: 'Brunet', age: 2 }
-      ]
-    }) 
+  nameChangeHandler =  (event, id) => {
+    const personIndex = this.state.persons.findIndex(p => {
+      return p.id === id
+    })
+
+    const person = {
+      ...this.state.persons[personIndex]
+    }
+
+    person.name = event.target.value
+
+    const persons = [...this.state.persons]
+    persons[personIndex] = person
+ 
+    this.setState({persons: persons}) 
   }
 
   deletePersonHandler = (personIndex) => {
@@ -41,7 +46,8 @@ class App extends Component {
 
   render() {
     const style = {
-      backgroundColor: 'white',
+      backgroundColor: 'green',
+      color: 'white',
       font: 'inherit',
       border: '1px solid blue',
       padding: '8px',
@@ -57,20 +63,24 @@ class App extends Component {
             return <Person
             click={() => this.deletePersonHandler(index)}
             name={person.name}
-            age={person.age} />
+            age={person.age}
+            key={person.id}
+            changed={(event) => this.nameChangeHandler(event, person.id)} />
           })}
-        </div>
+        </div> 
       )
+
+      style.backgroundColor = 'red'
     }
 
     return (
       <div className="App">
         <h1>Hi! I am a react app!! yessss</h1>
         <p>This is Really working</p>
-        <button
+        <button 
           style={style}
           onClick={this.togglePersonsHandler}>Toggle Persons</button>
-          {persons}
+        {persons}
       </div>
     );
     // return React.createElement('div', null, React.createElement('h1',{className: 'App'},'Hi! I am a react app!! yessss'))
